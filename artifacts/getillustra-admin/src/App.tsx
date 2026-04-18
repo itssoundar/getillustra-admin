@@ -9,6 +9,7 @@ import { Layout } from "@/components/layout";
 import { Loader2 } from "lucide-react";
 
 import SignIn from "@/pages/signin";
+import AuthCallback from "@/pages/auth-callback";
 import Dashboard from "@/pages/dashboard";
 import ProjectsList from "@/pages/projects/index";
 import NewProject from "@/pages/projects/new";
@@ -53,11 +54,19 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   );
 }
 
+function HashRedirect() {
+  if (window.location.hash.includes("access_token")) {
+    return <AuthCallback />;
+  }
+  return <ProtectedRoute component={Dashboard} />;
+}
+
 function Router() {
   return (
     <Switch>
       <Route path="/signin" component={SignIn} />
-      <Route path="/" component={() => <ProtectedRoute component={Dashboard} />} />
+      <Route path="/auth/callback" component={AuthCallback} />
+      <Route path="/" component={HashRedirect} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/projects/new" component={() => <ProtectedRoute component={NewProject} />} />
       <Route path="/projects/:id/edit" component={() => <ProtectedRoute component={EditProject} />} />
