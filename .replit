@@ -38,3 +38,4 @@ channel = "stable-25_05"
 
 [userenv.shared]
 VITE_SUPABASE_URL = "https://myrlhkvygctxtiflobzo.supabase.co"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15cmxoa3Z5Z2N0eHRpZmxvYnpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1Mjg4ODYsImV4cCI6MjA5MjEwNDg4Nn0.78ZkZYiTZtkckLs7Y86f48CMviplbalpCtsEAF9Yytg"
