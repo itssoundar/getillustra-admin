@@ -140,8 +140,8 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="border rounded-lg overflow-hidden overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-muted/30 border-b">
             <tr>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Name</th>

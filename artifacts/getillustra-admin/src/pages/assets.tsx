@@ -114,8 +114,8 @@ export default function AssetsPage() {
         )}
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="border rounded-lg overflow-hidden overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
           <thead className="bg-muted/30 border-b">
             <tr>
               <th className="w-10 px-4 py-3">

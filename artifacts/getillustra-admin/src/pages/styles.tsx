@@ -52,8 +52,8 @@ export default function StylesPage() {
         <div><h1 className="text-2xl font-semibold tracking-tight">Styles</h1><p className="text-sm text-muted-foreground mt-1">{styles.length} styles</p></div>
         <Button data-testid="add-style" onClick={() => setCreating(true)}><Plus className="h-4 w-4 mr-2" />Add Style</Button>
       </div>
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="border rounded-lg overflow-hidden overflow-x-auto">
+        <table className="w-full text-sm min-w-[500px]">
           <thead className="bg-muted/30 border-b"><tr>
             <th className="text-left px-4 py-3 font-medium text-muted-foreground">Name</th>
             <th className="text-left px-4 py-3 font-medium text-muted-foreground">Slug</th>

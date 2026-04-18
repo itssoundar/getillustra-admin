@@ -64,8 +64,8 @@ export default function Dashboard() {
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-7">
-        <Card className="col-span-4 lg:col-span-5">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-7">
+        <Card className="md:col-span-4 lg:col-span-5">
           <CardHeader>
             <CardTitle>Upload Trend (30 Days)</CardTitle>
             <CardDescription>Daily asset uploads over time</CardDescription>
@@ -117,7 +117,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3 lg:col-span-2">
+        <Card className="md:col-span-3 lg:col-span-2">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>Latest actions in the platform</CardDescription>
@@ -159,7 +159,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-7">
+        <Card className="md:col-span-7">
           <CardHeader>
             <CardTitle>Top Categories</CardTitle>
             <CardDescription>Most populated project categories</CardDescription>

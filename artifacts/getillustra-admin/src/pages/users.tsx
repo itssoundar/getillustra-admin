@@ -43,8 +43,8 @@ export default function UsersPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input data-testid="search-users" placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
       </div>
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="border rounded-lg overflow-hidden overflow-x-auto">
+        <table className="w-full text-sm min-w-[580px]">
           <thead className="bg-muted/30 border-b"><tr>
             <th className="text-left px-4 py-3 font-medium text-muted-foreground">User</th>
             <th className="text-left px-4 py-3 font-medium text-muted-foreground">Email</th>
