@@ -1,0 +1,317 @@
+Build a premium internal admin panel web app for GetIllustra.
+
+Project Name:
+getillustra-admin
+
+Purpose:
+This is the private control panel used to manage all content for GetIllustra.com. It should allow admins to login, upload illustration projects, manage categories, edit tags, control users, and publish content to the live website.
+
+Tech Stack:
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- Supabase (same existing project)
+- Lucide Icons
+- Recharts (for analytics charts)
+
+Design Direction:
+- Premium modern SaaS dashboard
+- Similar quality to Shopify Admin / Vercel Dashboard / Linear
+- Clean white UI
+- Spacious layout
+- Left sidebar navigation
+- Sticky topbar
+- Smooth interactions
+- Fully responsive
+
+---------------------------------------------------
+AUTHENTICATION
+---------------------------------------------------
+
+Create secure login page:
+
+Route:
+/signin
+
+Fields:
+- Email
+- Password
+
+Use Supabase auth login.
+
+After login:
+Check user role from profiles table.
+
+Allow access only if:
+role = admin
+
+Else deny access.
+
+---------------------------------------------------
+MAIN ROUTES
+---------------------------------------------------
+
+/dashboard
+/projects
+/projects/new
+/projects/[id]/edit
+/assets
+/categories
+/styles
+/tags
+/users
+/analytics
+/settings
+
+---------------------------------------------------
+SIDEBAR NAVIGATION
+---------------------------------------------------
+
+Dashboard
+Projects
+Assets
+Categories
+Styles
+Tags
+Users
+Analytics
+Settings
+Logout
+
+---------------------------------------------------
+DASHBOARD PAGE
+---------------------------------------------------
+
+Top cards:
+
+- Total Projects
+- Total Assets
+- Published Projects
+- Total Users
+- Downloads This Month
+
+Charts:
+- Upload trend
+- Top categories
+- Most viewed projects
+
+Recent Activity:
+- Last uploads
+- Last edits
+- New users
+
+---------------------------------------------------
+PROJECTS PAGE
+---------------------------------------------------
+
+Table view with search + filters.
+
+Columns:
+
+- Cover Image
+- Title
+- Category
+- Status
+- Featured
+- Created Date
+- Actions
+
+Actions:
+- Edit
+- Delete
+- Publish
+- Unpublish
+- Feature toggle
+
+Top actions:
+- Add New Project
+
+---------------------------------------------------
+NEW PROJECT PAGE
+---------------------------------------------------
+
+Form fields:
+
+- Title
+- Slug (auto generate)
+- Description
+- Category dropdown
+- Style multi select
+- Tags multi select
+- Cover Image upload
+- Status:
+  Draft / Published
+- Featured toggle
+
+Asset uploader:
+Upload multiple images for project.
+
+Save button.
+
+---------------------------------------------------
+EDIT PROJECT PAGE
+---------------------------------------------------
+
+Load existing data.
+
+Allow:
+
+- Edit all fields
+- Reorder assets
+- Delete assets
+- Add new assets
+- Change publish status
+
+---------------------------------------------------
+ASSETS PAGE
+---------------------------------------------------
+
+Manage all uploaded assets.
+
+Columns:
+
+- Preview
+- Asset Name
+- Project
+- Premium yes/no
+- Created date
+
+Bulk actions:
+- Delete selected
+- Mark premium
+- Move project
+
+---------------------------------------------------
+CATEGORIES PAGE
+---------------------------------------------------
+
+CRUD categories.
+
+Fields:
+- Name
+- Slug
+- Description
+
+---------------------------------------------------
+STYLES PAGE
+---------------------------------------------------
+
+CRUD styles.
+
+Examples:
+3D
+Flat
+Minimal
+Isometric
+Mascot
+
+---------------------------------------------------
+TAGS PAGE
+---------------------------------------------------
+
+CRUD tags.
+
+---------------------------------------------------
+USERS PAGE
+---------------------------------------------------
+
+Table:
+
+- Name
+- Email
+- Role
+- Joined date
+
+Actions:
+- Make admin
+- Make editor
+- Remove access
+
+---------------------------------------------------
+ANALYTICS PAGE
+---------------------------------------------------
+
+Show charts:
+
+- Most viewed projects
+- Most downloaded assets
+- Search terms
+- User growth
+- Saves trend
+
+---------------------------------------------------
+SETTINGS PAGE
+---------------------------------------------------
+
+Fields:
+
+- Site Name
+- Logo Upload
+- Homepage Featured Items Count
+- Contact Email
+- SEO Meta Defaults
+
+---------------------------------------------------
+SUPABASE INTEGRATION
+---------------------------------------------------
+
+Use same existing Supabase project.
+
+Use tables:
+
+profiles
+projects
+assets
+categories
+styles
+tags
+saved_items
+downloads
+view_history
+
+---------------------------------------------------
+SECURITY
+---------------------------------------------------
+
+Only admin users allowed.
+
+If not logged in:
+redirect /signin
+
+If role != admin:
+show Access Denied page
+
+---------------------------------------------------
+UI FEATURES
+---------------------------------------------------
+
+- Dark mode toggle
+- Search command bar
+- Toast notifications
+- Confirm delete modal
+- Drag and drop asset reorder
+- Skeleton loading states
+- Responsive mobile sidebar
+
+---------------------------------------------------
+DEPLOYMENT READY
+---------------------------------------------------
+
+Prepare for deployment on:
+
+admin.getillustra.com
+
+Use environment variables:
+
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+---------------------------------------------------
+IMPORTANT
+---------------------------------------------------
+
+Make this feel like a real premium startup admin system, not a template.
+
+Generate reusable components, clean file structure, scalable code, and polished UX.
