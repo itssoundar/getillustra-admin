@@ -1,22 +1,39 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: GetIllustra Admin API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Dashboard analytics
+  - name: projects
+    description: Project management
+  - name: assets
+    description: Asset management
+  - name: categories
+    description: Category management
+  - name: styles
+    description: Style management
+  - name: tags
+    description: Tag management
+  - name: users
+    description: User management
+  - name: settings
+    description: Site settings
+  - name: analytics
+    description: Analytics data
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +41,708 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # DASHBOARD
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard stats summary
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent activity feed
+      responses:
+        "200":
+          description: Recent activity items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/upload-trend:
+    get:
+      operationId: getUploadTrend
+      tags: [dashboard]
+      summary: Get upload trend over last 30 days
+      responses:
+        "200":
+          description: Upload trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendDataPoint"
+
+  /dashboard/top-categories:
+    get:
+      operationId: getTopCategories
+      tags: [dashboard]
+      summary: Get top categories by project count
+      responses:
+        "200":
+          description: Top categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryCount"
+
+  # PROJECTS
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List all projects
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, published]
+        - name: category_id
+          in: query
+          schema:
+            type: string
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectList"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a new project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get a project by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    put:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectBody"
+      responses:
+        "200":
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Project deleted
+
+  /projects/{id}/publish:
+    post:
+      operationId: publishProject
+      tags: [projects]
+      summary: Publish a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}/unpublish:
+    post:
+      operationId: unpublishProject
+      tags: [projects]
+      summary: Unpublish a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project unpublished
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}/toggle-featured:
+    post:
+      operationId: toggleProjectFeatured
+      tags: [projects]
+      summary: Toggle featured status of a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Featured toggled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  # ASSETS
+  /assets:
+    get:
+      operationId: listAssets
+      tags: [assets]
+      summary: List all assets
+      parameters:
+        - name: project_id
+          in: query
+          schema:
+            type: string
+        - name: is_premium
+          in: query
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of assets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetList"
+    post:
+      operationId: createAsset
+      tags: [assets]
+      summary: Create an asset record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssetBody"
+      responses:
+        "201":
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+
+  /assets/{id}:
+    put:
+      operationId: updateAsset
+      tags: [assets]
+      summary: Update an asset
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAssetBody"
+      responses:
+        "200":
+          description: Updated asset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+    delete:
+      operationId: deleteAsset
+      tags: [assets]
+      summary: Delete an asset
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Asset deleted
+
+  /assets/bulk:
+    post:
+      operationId: bulkUpdateAssets
+      tags: [assets]
+      summary: Bulk update assets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkAssetUpdateBody"
+      responses:
+        "200":
+          description: Assets updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: integer
+                required:
+                  - updated
+
+  # CATEGORIES
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List all categories
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+    post:
+      operationId: createCategory
+      tags: [categories]
+      summary: Create a category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryBody"
+      responses:
+        "201":
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+  /categories/{id}:
+    put:
+      operationId: updateCategory
+      tags: [categories]
+      summary: Update a category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCategoryBody"
+      responses:
+        "200":
+          description: Updated category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+    delete:
+      operationId: deleteCategory
+      tags: [categories]
+      summary: Delete a category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Category deleted
+
+  # STYLES
+  /styles:
+    get:
+      operationId: listStyles
+      tags: [styles]
+      summary: List all styles
+      responses:
+        "200":
+          description: List of styles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Style"
+    post:
+      operationId: createStyle
+      tags: [styles]
+      summary: Create a style
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStyleBody"
+      responses:
+        "201":
+          description: Style created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Style"
+
+  /styles/{id}:
+    put:
+      operationId: updateStyle
+      tags: [styles]
+      summary: Update a style
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStyleBody"
+      responses:
+        "200":
+          description: Updated style
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Style"
+    delete:
+      operationId: deleteStyle
+      tags: [styles]
+      summary: Delete a style
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Style deleted
+
+  # TAGS
+  /tags:
+    get:
+      operationId: listTags
+      tags: [tags]
+      summary: List all tags
+      responses:
+        "200":
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+    post:
+      operationId: createTag
+      tags: [tags]
+      summary: Create a tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTagBody"
+      responses:
+        "201":
+          description: Tag created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+
+  /tags/{id}:
+    put:
+      operationId: updateTag
+      tags: [tags]
+      summary: Update a tag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTagBody"
+      responses:
+        "200":
+          description: Updated tag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+    delete:
+      operationId: deleteTag
+      tags: [tags]
+      summary: Delete a tag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Tag deleted
+
+  # USERS
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users/{id}/role:
+    put:
+      operationId: updateUserRole
+      tags: [users]
+      summary: Update user role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRoleBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ANALYTICS
+  /analytics/most-viewed:
+    get:
+      operationId: getMostViewedProjects
+      tags: [analytics]
+      summary: Get most viewed projects
+      responses:
+        "200":
+          description: Most viewed projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectViewStat"
+
+  /analytics/most-downloaded:
+    get:
+      operationId: getMostDownloadedAssets
+      tags: [analytics]
+      summary: Get most downloaded assets
+      responses:
+        "200":
+          description: Most downloaded assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AssetDownloadStat"
+
+  /analytics/user-growth:
+    get:
+      operationId: getUserGrowth
+      tags: [analytics]
+      summary: Get user growth over time
+      responses:
+        "200":
+          description: User growth data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendDataPoint"
+
+  /analytics/saves-trend:
+    get:
+      operationId: getSavesTrend
+      tags: [analytics]
+      summary: Get saves trend over time
+      responses:
+        "200":
+          description: Saves trend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendDataPoint"
+
+  # SETTINGS
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get site settings
+      responses:
+        "200":
+          description: Site settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+    put:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update site settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSettingsBody"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +753,542 @@ components:
       required:
         - status
 
+    DashboardStats:
+      type: object
+      properties:
+        totalProjects:
+          type: integer
+        totalAssets:
+          type: integer
+        publishedProjects:
+          type: integer
+        totalUsers:
+          type: integer
+        downloadsThisMonth:
+          type: integer
+      required:
+        - totalProjects
+        - totalAssets
+        - publishedProjects
+        - totalUsers
+        - downloadsThisMonth
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [upload, edit, new_user, publish, delete]
+        description:
+          type: string
+        timestamp:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+      required:
+        - id
+        - type
+        - description
+        - timestamp
+
+    TrendDataPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        value:
+          type: integer
+      required:
+        - date
+        - value
+
+    CategoryCount:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        count:
+          type: integer
+      required:
+        - id
+        - name
+        - count
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [draft, published]
+        featured:
+          type: boolean
+        categoryId:
+          type: string
+          nullable: true
+        categoryName:
+          type: string
+          nullable: true
+        styleIds:
+          type: array
+          items:
+            type: string
+        tagIds:
+          type: array
+          items:
+            type: string
+        viewCount:
+          type: integer
+        downloadCount:
+          type: integer
+        assetCount:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - title
+        - slug
+        - status
+        - featured
+        - viewCount
+        - downloadCount
+        - assetCount
+        - createdAt
+        - updatedAt
+        - styleIds
+        - tagIds
+
+    ProjectList:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+        total:
+          type: integer
+      required:
+        - projects
+        - total
+
+    CreateProjectBody:
+      type: object
+      properties:
+        title:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [draft, published]
+        featured:
+          type: boolean
+        categoryId:
+          type: string
+          nullable: true
+        styleIds:
+          type: array
+          items:
+            type: string
+        tagIds:
+          type: array
+          items:
+            type: string
+      required:
+        - title
+        - slug
+        - status
+        - featured
+        - styleIds
+        - tagIds
+
+    UpdateProjectBody:
+      type: object
+      properties:
+        title:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [draft, published]
+        featured:
+          type: boolean
+        categoryId:
+          type: string
+          nullable: true
+        styleIds:
+          type: array
+          items:
+            type: string
+        tagIds:
+          type: array
+          items:
+            type: string
+
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        projectId:
+          type: string
+        projectTitle:
+          type: string
+          nullable: true
+        isPremium:
+          type: boolean
+        sortOrder:
+          type: integer
+        fileType:
+          type: string
+          nullable: true
+        fileSize:
+          type: integer
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - url
+        - projectId
+        - isPremium
+        - sortOrder
+        - createdAt
+
+    AssetList:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Asset"
+        total:
+          type: integer
+      required:
+        - assets
+        - total
+
+    CreateAssetBody:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        projectId:
+          type: string
+        isPremium:
+          type: boolean
+        sortOrder:
+          type: integer
+        fileType:
+          type: string
+          nullable: true
+        fileSize:
+          type: integer
+          nullable: true
+      required:
+        - name
+        - url
+        - projectId
+        - isPremium
+        - sortOrder
+
+    UpdateAssetBody:
+      type: object
+      properties:
+        name:
+          type: string
+        isPremium:
+          type: boolean
+        sortOrder:
+          type: integer
+        projectId:
+          type: string
+
+    BulkAssetUpdateBody:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          enum: [delete, mark_premium, unmark_premium, move_project]
+        projectId:
+          type: string
+          nullable: true
+      required:
+        - ids
+        - action
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        projectCount:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - projectCount
+        - createdAt
+
+    CreateCategoryBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+      required:
+        - name
+        - slug
+
+    UpdateCategoryBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+
+    Style:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        projectCount:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - projectCount
+        - createdAt
+
+    CreateStyleBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+      required:
+        - name
+        - slug
+
+    UpdateStyleBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        projectCount:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - projectCount
+        - createdAt
+
+    CreateTagBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+      required:
+        - name
+        - slug
+
+    UpdateTagBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+          nullable: true
+        role:
+          type: string
+        avatarUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - email
+        - role
+        - createdAt
+
+    UpdateUserRoleBody:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [admin, editor, user]
+      required:
+        - role
+
+    ProjectViewStat:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        viewCount:
+          type: integer
+      required:
+        - id
+        - title
+        - viewCount
+
+    AssetDownloadStat:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        projectTitle:
+          type: string
+          nullable: true
+        downloadCount:
+          type: integer
+      required:
+        - id
+        - name
+        - downloadCount
+
+    SiteSettings:
+      type: object
+      properties:
+        siteName:
+          type: string
+        logoUrl:
+          type: string
+          nullable: true
+        contactEmail:
+          type: string
+          nullable: true
+        featuredItemsCount:
+          type: integer
+        seoTitle:
+          type: string
+          nullable: true
+        seoDescription:
+          type: string
+          nullable: true
+      required:
+        - siteName
+        - featuredItemsCount
+
+    UpdateSettingsBody:
+      type: object
+      properties:
+        siteName:
+          type: string
+        logoUrl:
+          type: string
+          nullable: true
+        contactEmail:
+          type: string
+          nullable: true
+        featuredItemsCount:
+          type: integer
+        seoTitle:
+          type: string
+          nullable: true
+        seoDescription:
+          type: string
+          nullable: true
