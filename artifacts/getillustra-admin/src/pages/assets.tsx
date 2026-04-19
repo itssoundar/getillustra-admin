@@ -6,7 +6,8 @@ import {
   useCreateAsset,
   useListProjects,
   getListAssetsQueryKey,
-} from "@workspace/api-client-react";
+  uploadAssetFile,
+} from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -62,8 +63,6 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 
-const BASE_URL = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
-
 function formatBytes(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -92,32 +91,6 @@ interface PendingFile {
   status: "pending" | "uploading" | "done" | "error";
   error?: string;
   objectPath?: string;
-}
-
-async function requestUploadUrl(file: File): Promise<{ uploadURL: string; objectPath: string }> {
-  const res = await fetch(`${BASE_URL}/api/storage/uploads/request-url`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: file.name,
-      size: file.size,
-      contentType: file.type || "application/octet-stream",
-    }),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || "Failed to get upload URL");
-  }
-  return res.json();
-}
-
-async function uploadToGcs(file: File, uploadURL: string): Promise<void> {
-  const res = await fetch(uploadURL, {
-    method: "PUT",
-    body: file,
-    headers: { "Content-Type": file.type || "application/octet-stream" },
-  });
-  if (!res.ok) throw new Error("Upload to storage failed");
 }
 
 export default function AssetsPage() {
@@ -237,13 +210,11 @@ export default function AssetsPage() {
         prev.map((f) => (f.id === pf.id ? { ...f, status: "uploading" } : f)),
       );
       try {
-        const { uploadURL, objectPath } = await requestUploadUrl(pf.file);
-        await uploadToGcs(pf.file, uploadURL);
-        const assetUrl = `${BASE_URL}/api/storage${objectPath}`;
+        const { url, path } = await uploadAssetFile(pf.file);
         await createAsset.mutateAsync({
           data: {
             name: pf.file.name,
-            url: assetUrl,
+            url,
             projectId: selectedProjectId,
             isPremium: markPremium,
             sortOrder: 0,
@@ -253,7 +224,7 @@ export default function AssetsPage() {
         });
         setPendingFiles((prev) =>
           prev.map((f) =>
-            f.id === pf.id ? { ...f, status: "done", objectPath } : f,
+            f.id === pf.id ? { ...f, status: "done", objectPath: path } : f,
           ),
         );
         successCount++;

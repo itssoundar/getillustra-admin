@@ -5,7 +5,7 @@ import {
   useUpdateStyle,
   useDeleteStyle,
   getListStylesQueryKey,
-} from "@workspace/api-client-react";
+} from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";

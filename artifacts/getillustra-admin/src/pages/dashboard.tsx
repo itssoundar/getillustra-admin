@@ -3,7 +3,7 @@ import {
   useGetRecentActivity, 
   useGetUploadTrend, 
   useGetTopCategories 
-} from "@workspace/api-client-react";
+} from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";

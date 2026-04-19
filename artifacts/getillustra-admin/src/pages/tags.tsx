@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListTags, useCreateTag, useUpdateTag, useDeleteTag, getListTagsQueryKey } from "@workspace/api-client-react";
+import { useListTags, useCreateTag, useUpdateTag, useDeleteTag, getListTagsQueryKey } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";

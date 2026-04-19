@@ -1,4 +1,4 @@
-import { useGetMostViewedProjects, useGetMostDownloadedAssets, useGetUserGrowth, useGetSavesTrend, useGetUploadTrend } from "@workspace/api-client-react";
+import { useGetMostViewedProjects, useGetMostDownloadedAssets, useGetUserGrowth, useGetSavesTrend, useGetUploadTrend } from "@/lib/api";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

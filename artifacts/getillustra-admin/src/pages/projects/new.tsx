@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useCreateProject, useListCategories, useListStyles, useListTags } from "@workspace/api-client-react";
+import { useCreateProject, useListCategories, useListStyles, useListTags } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

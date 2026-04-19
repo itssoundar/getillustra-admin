@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListUsers, useUpdateUserRole, getListUsersQueryKey } from "@workspace/api-client-react";
+import { useListUsers, useUpdateUserRole, getListUsersQueryKey } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";

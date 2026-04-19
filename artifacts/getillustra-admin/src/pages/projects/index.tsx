@@ -7,7 +7,7 @@ import {
   useUnpublishProject, 
   useToggleProjectFeatured,
   getListProjectsQueryKey
-} from "@workspace/api-client-react";
+} from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { 
